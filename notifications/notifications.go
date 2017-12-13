@@ -41,11 +41,9 @@ func Check(err error) {
 	}
 }
 
-func githubRequest(url string, token string) []byte {
+func githubRequest(url string) []byte {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
-	authHeader := fmt.Sprintf("token %s", token)
-	req.Header.Add("Authorization", authHeader)
 	resp, err := client.Do(req)
 	Check(err)
 	defer resp.Body.Close()
@@ -65,10 +63,10 @@ func GetIssuesUrl(repo string) string {
 	return GetEndpointUrl(UrlSuffix)
 }
 
-func GetIssues(repo string, token string) []Issue {
+func GetIssues(repo string) []Issue {
 	log.Println("Getting issues")
 	url := GetIssuesUrl(repo)
-	body := githubRequest(url, token)
+	body := githubRequest(url)
 	var issues []Issue
 	err := json.Unmarshal(body, &issues)
 	Check(err)

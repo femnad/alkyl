@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -61,18 +60,10 @@ func (d Dir) Attr(ctx context.Context, a *fuse.Attr) error {
 
 var dirEntries map[string][]notifications.Issue
 
-func getIssues(repo string) []notifications.Issue {
-	token := os.Getenv(TokenEnviromentVar)
-	if token == "" {
-		log.Fatalf("Token environment variable not found, set it with `%s`", TokenEnviromentVar)
-	}
-	return notifications.GetIssues(repo, token)
-}
-
 func getAndMaybeStoreDirContents(name string) []notifications.Issue {
 	issues, alreadyPresent := dirEntries[name]
 	if !alreadyPresent {
-		issues = getIssues(Repo)
+		issues = notifications.GetIssues(Repo)
 		if dirEntries == nil {
 			dirEntries = make(map[string][]notifications.Issue)
 		}
